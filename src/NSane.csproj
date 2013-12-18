@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CF40F816-E508-4299-AC3D-B0B09EF14565}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NSane</RootNamespace>
+    <AssemblyName>NSane</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\allrules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Release\NSane.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\nsane.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedProperties.cs">
+      <Link>Properties\SharedProperties.cs</Link>
+    </Compile>
+    <Compile Include="Connection.cs" />
+    <Compile Include="Device.cs" />
+    <Compile Include="DeviceOption.cs" />
+    <Compile Include="FrameFormat.cs" />
+    <Compile Include="ImageCreator.cs" />
+    <Compile Include="IOpenableDevice.cs" />
+    <Compile Include="IScanResult.cs" />
+    <Compile Include="Network\NetworkProcedureCaller.cs" />
+    <Compile Include="NumericExtensions.cs" />
+    <Compile Include="SaneConstraint.cs" />
+    <Compile Include="DisposableObject.cs" />
+    <Compile Include="IConnection.cs" />
+    <Compile Include="IDevice.cs" />
+    <Compile Include="IDeviceOption.cs" />
+    <Compile Include="IOpenedDevice.cs" />
+    <Compile Include="IOptionConstraint.cs" />
+    <Compile Include="L10n\Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Network\NetworkCommand.cs" />
+    <Compile Include="Network\NetworkConnection.cs" />
+    <Compile Include="Network\NetworkDevice.cs" />
+    <Compile Include="Network\NetworkDeviceOption.cs" />
+    <Compile Include="SaneOptionAction.cs" />
+    <Compile Include="Constraint\StringListConstraint.cs" />
+    <Compile Include="Constraint\Int32ListConstraint.cs" />
+    <Compile Include="Constraint\RangeConstraint.cs" />
+    <Compile Include="Constraint\NoneConstraint.cs" />
+    <Compile Include="Network\NetworkMethods.cs" />
+    <Compile Include="NSaneException.cs" />
+    <Compile Include="SaneCapabilities.cs" />
+    <Compile Include="SaneOptionInformation.cs" />
+    <Compile Include="SaneStatus.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SaneType.cs" />
+    <Compile Include="SaneUnit.cs" />
+    <Compile Include="TaskBasedScanResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="L10n\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
+      <Link>Properties\CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\nsane.snk">
+      <Link>nsane.snk</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

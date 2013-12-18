@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2C242BCC-A3AD-4288-82BF-99EF5632F7D0}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NSane.Tests</RootNamespace>
+    <AssemblyName>NSane.Tests</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>NSane.Tests.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\nsane.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="nunit-console-runner">
+      <HintPath>..\lib\nunit\nunit-console-runner.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\nunit\nunit.framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedProperties.cs">
+      <Link>Properties\SharedProperties.cs</Link>
+    </Compile>
+    <Compile Include="ConnectionTest.cs" />
+    <Compile Include="DeviceTest.cs" />
+    <Compile Include="OptionsTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScanTest.cs" />
+    <Compile Include="ScanTestCaseFactory.cs" />
+    <Compile Include="TestConstants.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
+      <Link>Properties\CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\nsane.snk">
+      <Link>nsane.snk</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="images\16_color_color_pattern_0.tiff" />
+    <EmbeddedResource Include="images\16_color_color_pattern_1.tiff" />
+    <EmbeddedResource Include="images\16_color_grid_0.tiff" />
+    <EmbeddedResource Include="images\16_color_grid_1.tiff" />
+    <EmbeddedResource Include="images\16_color_solid_black_0.tiff" />
+    <EmbeddedResource Include="images\16_color_solid_black_1.tiff" />
+    <EmbeddedResource Include="images\16_color_solid_white_0.tiff" />
+    <EmbeddedResource Include="images\16_color_solid_white_1.tiff" />
+    <EmbeddedResource Include="images\16_gray_color_pattern_0.tiff" />
+    <EmbeddedResource Include="images\16_gray_color_pattern_1.tiff" />
+    <EmbeddedResource Include="images\16_gray_grid_0.tiff" />
+    <EmbeddedResource Include="images\16_gray_grid_1.tiff" />
+    <EmbeddedResource Include="images\16_gray_solid_black_0.tiff" />
+    <EmbeddedResource Include="images\16_gray_solid_black_1.tiff" />
+    <EmbeddedResource Include="images\16_gray_solid_white_0.tiff" />
+    <EmbeddedResource Include="images\16_gray_solid_white_1.tiff" />
+    <EmbeddedResource Include="images\1_gray_color_pattern.tiff" />
+    <EmbeddedResource Include="images\1_gray_grid.tiff" />
+    <EmbeddedResource Include="images\1_gray_solid_black.tiff" />
+    <EmbeddedResource Include="images\1_gray_solid_white.tiff" />
+    <EmbeddedResource Include="images\8_color_color_pattern.tiff" />
+    <EmbeddedResource Include="images\8_color_grid.tiff" />
+    <EmbeddedResource Include="images\8_color_solid_black.tiff" />
+    <EmbeddedResource Include="images\8_color_solid_white.tiff" />
+    <EmbeddedResource Include="images\8_gray_color_pattern.tiff" />
+    <EmbeddedResource Include="images\8_gray_grid.tiff" />
+    <EmbeddedResource Include="images\8_gray_solid_black.tiff" />
+    <EmbeddedResource Include="images\8_gray_solid_white.tiff" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\src\NSane.Mono.csproj">
+      <Project>{CF40F816-E508-4299-AC3D-B0B09EF14565}</Project>
+      <Name>NSane.Mono</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
