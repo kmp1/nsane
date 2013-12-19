@@ -35,13 +35,13 @@ and then you can fiddle with the options it has or just scan.
 
 This is probably the simplest way to use the API if you just want to do a scan:
 
-    BitmapSource image;
+    BitmapImage image;
     using(var c = Connection.At("mymachine", 65535))
     {
         using(var dev = c.OpenDevice("test:0"))
         {
             var result = dev.Scan();
-            image = result.Image;
+            image = result.Image.ToBitmapImage();
         }
     }
 
@@ -80,7 +80,9 @@ Next Steps
 
 I see no reason why a "local" SANE scanner could not be implemented, at least
 for mono that would work on Mac and Linux.  The project has mono csproj files
-that do at least compile but there's a whole heap of NotImplementedExceptions.
+that but I have not been able to get them to compile as I have no 
+PresentationCore assembly available to me.  I believe that newer mono versions
+have this library.
 
 License
 -
