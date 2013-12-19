@@ -9,7 +9,7 @@ namespace NSane.Tests
     public class DeviceTest
     {
         [Test]
-        public void Device_GetAll_Suceeds()
+        public void Device_GetAll_Succeeds()
         {
             using (var connection = Connection.At(TestConstants.SaneDaemon))
             {

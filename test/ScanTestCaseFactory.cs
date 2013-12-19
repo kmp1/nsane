@@ -11,7 +11,7 @@ namespace NSane.Tests
         {
             get
             {
-                for (int i = 0; i < 16 /* should be 24*/; i += 8)
+                for (int i = 0; i < 24 /* should be 24*/; i += 8)
                 {
                     int depth = i == 0 ? 1 : i;
 
@@ -54,7 +54,7 @@ namespace NSane.Tests
                                                             "{0}_{1}_{2}",
                                                             depth.ToString(CultureInfo.InvariantCulture),
                                                             mode.ToLowerInvariant(),
-															pat.Replace(' ', '_').ToLowerInvariant());
+                                                            pat.Replace(' ', '_').ToLowerInvariant());
 
                                 yield return new TestCaseData(depth,
                                                               mode,

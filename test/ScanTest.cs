@@ -1,17 +1,24 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
+﻿using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Windows.Media.Imaging;
+
 using NUnit.Framework;
 
 namespace NSane.Tests
 {
 
-    [TestFixture]
+    [TestFixture, RequiresSTA]
     public class ScanTest
     {
-        
-        [Test, TestCaseSource(typeof (ScanTestCaseFactory), "ScanTestCases")]
+        [SetUp]
+        public void TestSetUp()
+        {
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+        }
+
+        [Test, TestCaseSource(typeof (ScanTestCaseFactory), "ScanTestCases"), RequiresSTA]
         public void Scan_NormalPicture_Succeeds(int depth,
                                                 string mode,
                                                 string pattern,
@@ -41,16 +48,28 @@ namespace NSane.Tests
                     }
                     var res = device.Scan();
 
-                    bool match;
-                    using (var bmp = res.Image)
-                    {
-                        match = ImagesMatch(bmp, outFile);
+                    var ours = res.Image.ToBitmapImage();
 
-                        if (!match)
+                    var theirs = LoadReference(outFile).ToBitmapImage();
+              
+                    bool match = theirs.IsEqual(ours);
+                    if (!match)
+                    {
+                        var failureFile = Path.Combine(
+                            TestConstants.FailedTestOutputFolder,
+                            outFile) + ".tiff";
+
+                        var encoder = new TiffBitmapEncoder
+                            {
+                                Compression = TiffCompressOption.None
+                            };
+
+                        using (var f = File.Create(failureFile))
                         {
-                            bmp.Save(@"c:\\nsane_test_output\\failures\\" + outFile + ".bmp", ImageFormat.Bmp);
-                        }                     
-                    }
+                            encoder.Frames.Add(BitmapFrame.Create(ours));
+                            encoder.Save(f);
+                        }
+                    }                                   
 
                     Assert.That(match,
                                     Is.True,
@@ -59,36 +78,18 @@ namespace NSane.Tests
             }
         }
 
-        private bool ImagesMatch(Bitmap ours, string fileName)
+        private BitmapSource LoadReference(string fileName)
         {
-            using (var theirs = LoadReference(fileName))
-            {
-                if (ours.Height != theirs.Height ||
-                    ours.Width != theirs.Width)
-                    return false;
-
-                for (int y = 0; y < theirs.Height; y++)
-                {
-                    for (int x = 0; x < theirs.Width; x++)
-                    {
-                        var theirPixel = theirs.GetPixel(x, y);
-                        var myPixel = ours.GetPixel(x, y);
-
-                        if (theirPixel != myPixel)
-                            return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private Bitmap LoadReference(string fileName)
-        {
-            return new Bitmap(Assembly
+            var imageStreamSource = Assembly
                                   .GetExecutingAssembly()
                                   .GetManifestResourceStream(
-                                      "NSane.Tests.images." + fileName + ".tiff"));
+                                      "NSane.Tests.images." + fileName + ".tiff");
+            
+            var decoder = new TiffBitmapDecoder(imageStreamSource, 
+                BitmapCreateOptions.PreservePixelFormat, 
+                BitmapCacheOption.Default);
+            BitmapSource ret = decoder.Frames[0];
+            return ret;
         }
     }
 }

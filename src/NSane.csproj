@@ -42,15 +42,18 @@
     <AssemblyOriginatorKeyFile>..\nsane.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedProperties.cs">
       <Link>Properties\SharedProperties.cs</Link>
     </Compile>
+    <Compile Include="BitmapSourceExtensions.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DeviceOption.cs" />

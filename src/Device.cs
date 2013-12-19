@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace NSane
 {
@@ -73,6 +74,6 @@ namespace NSane
         /// <param name="onCompleteCallback">The callback to cal on
         /// completion</param>
         /// <returns>The scanned image result</returns>
-        public abstract IScanResult Scan(Action<Bitmap> onCompleteCallback);
+        public abstract IScanResult Scan(Action<BitmapSource> onCompleteCallback);
     }
 }

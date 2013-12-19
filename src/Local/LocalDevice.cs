@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.Windows.Media.Imaging;
 
 namespace NSane
 {
@@ -54,7 +55,7 @@ namespace NSane
 			throw new NotImplementedException();
 		}
 
-		public override IScanResult Scan(Action<Bitmap> onCompleteCallback)
+		public override IScanResult Scan(Action<BitmapSource> onCompleteCallback)
 		{
 			throw new NotImplementedException();
 		}

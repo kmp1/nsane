@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Windows.Media.Imaging;
+
 using NSane.Constraint;
 
 namespace NSane.Network
@@ -179,14 +180,14 @@ namespace NSane.Network
         /// <param name="password">The password</param>
         /// <param name="cancelToken">The cancellation token</param>
         /// <returns>The scanned image</returns>
-        internal Bitmap Scan(int handle, 
-                             string userName, 
-                             string password, 
-                             CancellationToken cancelToken)
+        internal BitmapSource Scan(int handle, 
+                                   string userName, 
+                                   string password, 
+                                   CancellationToken cancelToken)
         {
             cancelToken.Register(() => Cancel(handle));
 
-            Bitmap ret;
+            BitmapSource ret;
             using (var ms = new MemoryStream())
             {
                 int bytesPerLine;

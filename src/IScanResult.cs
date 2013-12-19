@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace NSane
 {
@@ -17,7 +18,7 @@ namespace NSane
         /// so use the <see cref="IsFinished"/> property to decide whether to
         /// call this or not.
         /// </summary>
-        Bitmap Image { get; }
+        BitmapSource Image { get; }
 
         /// <summary>
         /// Returns <c>true</c> if the scanning has completed

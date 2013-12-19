@@ -1,18 +1,22 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Runtime.InteropServices;
+﻿using System.IO;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace NSane
 {
     /// <summary>
     /// The job of this class is to data the raw binary data for an "image"
     /// that has been returned by the SANE API and convert it to something that
-    /// is useful to .NET developers (i.e. a <see cref="Bitmap"/> object)
+    /// is useful to .NET developers (i.e. a <see cref="BitmapSource"/> object)
     /// </summary>
     internal static class ImageCreator
     {
+        private static readonly Color[] GrayPalette = CreateGrayPalette();
+        
+        private static readonly Color[] BlackAndWhitePalette
+            = CreateBlackAndWhitePalette();
+
         /// <summary>
         /// Convert the given stream into a bitmap
         /// </summary>
@@ -24,54 +28,41 @@ namespace NSane
         /// <param name="littleEndian"><c>true</c> if the values are little
         /// endian</param>
         /// <param name="color"><c>true</c> if it is a color bitmap</param>
-        /// <returns>A <see cref="Bitmap"/> containing the resulting
+        /// <returns>A <see cref="BitmapSource"/> containing the resulting
         /// image</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage(
             "Microsoft.Reliability",
             "CA2000:Dispose objects before losing scope", Justification =
                 "If I did that, this whole thing would break!")]
-        internal static Bitmap ToBitmap(MemoryStream stream,
-                                        int bytesPerLine,
-                                        int pixelsPerLine,
-                                        int lines,
-                                        int depth,
-                                        bool littleEndian,
-                                        bool color)
+        internal static BitmapSource ToBitmap(MemoryStream stream,
+                                             int bytesPerLine,
+                                             int pixelsPerLine,
+                                             int lines,
+                                             int depth,
+                                             bool littleEndian,
+                                             bool color)
         {
-
             var data = stream.ToArray();
 
-            Bitmap ret;
+            BitmapFrame ret;
             if (depth == 1)
             {
-                ret = ToBitmap1(lines, bytesPerLine, pixelsPerLine, data);
+                ret = ToBitmap1(lines, pixelsPerLine, data);
             }
             else if (depth == 8)
             {
-                if (color)
-                {
-                    ret = ToRgbBitmap8(lines,
-                                       bytesPerLine,
-                                       pixelsPerLine,
-                                       data);
-                }
-                else
-                {
-                    ret = ToGrayBitmap8(lines,
-                                        bytesPerLine,
-                                        pixelsPerLine,
-                                        data);
-                }
+                ret = color
+                    ? ToRgbBitmap8(lines, pixelsPerLine, data)
+                    : ToGrayBitmap8(lines, pixelsPerLine, data);
             }
             else
             {
-                using (var f = File.Create("c:\\data16.bin"))
-                {
-                    f.Write(data, 0, data.Length);
-                }
-
-                throw new NotImplementedException("LE: " + littleEndian);
+                ret = color 
+                    ? ToRgbBitmap16(pixelsPerLine, lines, data) 
+                    : ToGrayBitmap16(pixelsPerLine, lines, data);
             }
+            
+            ret.Freeze();
 
             return ret;
         }
@@ -85,100 +76,133 @@ namespace NSane
         /// reasonable just to handle it the same
         /// </remarks>
         /// <param name="lines">The number of lines</param>
-        /// <param name="bytesPerLine">The count of bytes per line</param>
         /// <param name="pixelsPerLine">The count of pixels per line</param>
         /// <param name="data">The data</param>
-        /// <returns>A newly created <see cref="Bitmap"/></returns>
+        /// <returns>A newly created <see cref="BitmapSource"/></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage(
             "Microsoft.Reliability", 
             "CA2000:Dispose objects before losing scope", Justification = 
             "If I disposed of it, it just wouldn't work now would it!?")]
-        private static Bitmap ToBitmap1(int lines,
-                                        int bytesPerLine,
-                                        int pixelsPerLine,
-                                        byte[] data)
+        private static BitmapFrame ToBitmap1(int lines,
+                                             int pixelsPerLine,
+                                             byte[] data)
         {
-            var bmp = new Bitmap(pixelsPerLine,
-                                 lines,
-                                 PixelFormat.Format1bppIndexed);
+            var wb = new WriteableBitmap(pixelsPerLine, 
+                                         lines,
+                                         50.0, 
+                                         50.0, 
+                                         PixelFormats.Indexed1,
+                                         new BitmapPalette(BlackAndWhitePalette));
+            
+            CopyIntoBitmap(wb, data);
 
-            CreateBlackAndWhitePalette(bmp);
-
-            CopyIntoBitmap(bmp, data, bytesPerLine);
-
-            return bmp;
+            return BitmapFrame.Create(wb);
         }
 
         /// <summary>
         /// Convert the data into a bitmap using a depth of 8 (grayscale)
         /// </summary>
         /// <param name="lines">The number of lines</param>
-        /// <param name="bytesPerLine">The count of bytes per line</param>
         /// <param name="pixelsPerLine">The count of pixels per line</param>
         /// <param name="data">The data</param>
-        /// <returns>A newly created <see cref="Bitmap"/></returns>
+        /// <returns>A newly created <see cref="BitmapSource"/></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage(
             "Microsoft.Reliability",
             "CA2000:Dispose objects before losing scope", Justification =
             "If I disposed of it, it just wouldn't work now would it!?")]
-        private static Bitmap ToGrayBitmap8(int lines,
-                                            int bytesPerLine,
-                                            int pixelsPerLine,
-                                            byte[] data)
+        private static BitmapFrame ToGrayBitmap8(int lines,
+                                                 int pixelsPerLine,
+                                                 byte[] data)
         {
-            var bmp = new Bitmap(pixelsPerLine,
-                                 lines,
-                                 PixelFormat.Format8bppIndexed);
+            var wb = new WriteableBitmap(pixelsPerLine,
+                                         lines,
+                                         50.0,
+                                         50.0,
+                                         PixelFormats.Indexed8,
+                                         new BitmapPalette(GrayPalette));
 
-            CreateGrayPalette(bmp);
+            CopyIntoBitmap(wb, data);
 
-            CopyIntoBitmap(bmp, data, bytesPerLine);
-
-            return bmp;
+            return BitmapFrame.Create(wb);
         }
 
         /// <summary>
         /// Convert the data into a bitmap using a depth of 8 (color)
         /// </summary>
         /// <param name="lines">The number of lines</param>
-        /// <param name="bytesPerLine">The count of bytes per line</param>
         /// <param name="pixelsPerLine">The count of pixels per line</param>
         /// <param name="data">The data</param>
-        /// <returns>A newly created <see cref="Bitmap"/></returns>
+        /// <returns>A newly created <see cref="BitmapSource"/></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage(
             "Microsoft.Reliability",
             "CA2000:Dispose objects before losing scope", Justification =
             "If I disposed of it, it just wouldn't work now would it!?")]
-        private static Bitmap ToRgbBitmap8(int lines,
-                                           int bytesPerLine,
-                                           int pixelsPerLine,
-                                           byte[] data)
+        private static BitmapFrame ToRgbBitmap8(int lines,
+                                                int pixelsPerLine,
+                                                byte[] data)
         {
-            SwapRedAndBlue8(data);
+            var wb = new WriteableBitmap(pixelsPerLine,
+                                         lines,
+                                         50.0,
+                                         50.0,
+                                         PixelFormats.Rgb24,
+                                         null);
 
-            var bmp = new Bitmap(pixelsPerLine,
-                                 lines,
-                                 PixelFormat.Format24bppRgb);
+            CopyIntoBitmap(wb, data);
 
-            CopyIntoBitmap(bmp, data, bytesPerLine);
+            return BitmapFrame.Create(wb);
+        }
+        
+        /// <summary>
+        /// Convert to an RGB 16 bitmap
+        /// </summary>
+        /// <param name="pixelsPerLine"></param>
+        /// <param name="lines"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private static BitmapFrame ToRgbBitmap16(int pixelsPerLine, 
+                                                 int lines, 
+                                                 byte[] data)
+        {
+            var format = PixelFormats.Rgb48;
+            int stride = (pixelsPerLine*format.BitsPerPixel + 7)/8;
+            const double dpi = 50.0;
 
-            return bmp;
+            var wb = new WriteableBitmap(pixelsPerLine, lines, 
+                dpi, dpi, format, null);
+
+            wb.WritePixels(new Int32Rect(0, 0, pixelsPerLine, lines),
+                           data,
+                           stride,
+                           0);
+            
+            return BitmapFrame.Create(wb);
         }
 
         /// <summary>
-        /// The order is not red,green,blue but blue,green,red despite the
-        /// name of the class!
+        /// Convert to an RGB 16 bitmap
         /// </summary>
+        /// <param name="pixelsPerLine"></param>
+        /// <param name="lines"></param>
         /// <param name="data"></param>
-        private static void SwapRedAndBlue8(byte[] data)
+        /// <returns></returns>
+        private static BitmapFrame ToGrayBitmap16(int pixelsPerLine,
+                                                  int lines,
+                                                  byte[] data)
         {
-            for(int i = 2; i < data.Length; i+=3)
-            {
-                var r = data[i - 2];
-                var b = data[i];
-                data[i] = r;
-                data[i - 2] = b;
-            }
+            var format = PixelFormats.Gray16;
+            int stride = (pixelsPerLine * format.BitsPerPixel + 7) / 8;
+            const double dpi = 50.0;
+
+            var wb = new WriteableBitmap(pixelsPerLine, lines,
+                dpi, dpi, format, null);
+
+            wb.WritePixels(new Int32Rect(0, 0, pixelsPerLine, lines),
+                           data,
+                           stride,
+                           0);
+
+            return BitmapFrame.Create(wb);
         }
 
         /// <summary>
@@ -186,74 +210,41 @@ namespace NSane
         /// </summary>
         /// <param name="bmp">The bitmap to copy into</param>
         /// <param name="data">The data to copy</param>
-        /// <param name="bytesPerLine">The bytes per line</param>
-        private static void CopyIntoBitmap(Bitmap bmp,
-                                           byte[] data, 
-                                           int bytesPerLine)
+        private static void CopyIntoBitmap(WriteableBitmap bmp,
+                                           byte[] data)
         {
-            BitmapData bmpData = bmp
-                .LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                          ImageLockMode.ReadWrite,
-                          bmp.PixelFormat);
-
-            MarshalBitmapData(bmpData, bmp.Height, bytesPerLine, data);
-
-            bmp.UnlockBits(bmpData);
+            int stride = (bmp.PixelWidth * bmp.Format.BitsPerPixel + 7) / 8;
+            bmp.WritePixels(new Int32Rect(0, 0, bmp.PixelWidth, bmp.PixelHeight),
+                data,
+                stride,
+                0);
         }
-
-        /// <summary>
-        /// Copies each row of data into the bitmap (the rows may require
-        /// padding due to the bitmap format)
-        /// </summary>
-        /// <param name="bmpData">The data object</param>
-        /// <param name="lines">How many lines there are</param>
-        /// <param name="bytesPerLine">Number of bytes per line</param>
-        /// <param name="data">The data</param>
-        private static void MarshalBitmapData(BitmapData bmpData,
-                                              int lines,
-                                              int bytesPerLine,
-                                              byte[] data)
-        {
-            
-            for (int i = 0; i < lines; i++)
-            {
-                IntPtr offset = bmpData.Scan0 + i*bmpData.Stride;
-                Marshal.Copy(data, i*bytesPerLine, offset, bytesPerLine);
-
-                int padding = bmpData.Stride - bytesPerLine;
-                if (padding > 0)
-                {
-                    var pad = new byte[padding];
-                    Marshal.Copy(pad, 0, offset + bytesPerLine, padding);
-                }
-            }
-        }
-
+        
         /// <summary>
         /// Creates a black and white color palette
         /// </summary>
-        /// <param name="bmp">The bitmap to set the palette of</param>
-        private static void CreateBlackAndWhitePalette(Bitmap bmp)
+        private static Color[] CreateBlackAndWhitePalette()
         {
-            ColorPalette palette = bmp.Palette;
-            palette.Entries[0] = Color.White;
-            palette.Entries[1] = Color.Black;
-            bmp.Palette = palette;
+            var palette = new []
+            {
+                Colors.White,
+                Colors.Black
+            };
+            return palette;
         }
-
+        
         /// <summary>
         /// Creates a grayscale color palette
         /// </summary>
-        /// <param name="bmp">The bitmap to create the palette of</param>
-        private static void CreateGrayPalette(Bitmap bmp)
+        private static Color[] CreateGrayPalette()
         {
-            var palette = bmp.Palette;
-            var entries = palette.Entries;
+            var entries = new Color[256];
             for (int i = 0; i < 256; i++)
             {
-                entries[i] = Color.FromArgb(255, i, i, i);
-            }
-            bmp.Palette = palette;
+                var b = (byte)i;
+                entries[i] = Color.FromArgb(255, b, b, b);
+            }      
+            return entries;
         }
     }
 }

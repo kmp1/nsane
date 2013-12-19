@@ -2,7 +2,6 @@
 using System.Linq;
 
 using NUnit.Framework;
-using System.Drawing.Imaging;
 
 namespace NSane.Tests
 {
@@ -50,7 +49,7 @@ namespace NSane.Tests
 
                     double valu = resolution.Value;
 
-					Assert.That(valu, Is.Not.EqualTo(0));
+                    Assert.That(valu, Is.Not.EqualTo(0));
 
                     resolution.Value = 1200.0;
                 }

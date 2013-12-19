@@ -23,30 +23,31 @@ namespace NSane
         /// </summary>
         private static readonly int SaneVersion = CreateVersionCode(1, 0, 3);
 
-		/// <summary>
-		/// Makes a connection to a local SANE instance without any
-		/// credentials.
-		/// </summary>
-		public static IConnection Local()
-		{
-			return Local (null, null);
-		}
+#if Mono
+        /// <summary>
+        /// Makes a connection to a local SANE instance without any
+        /// credentials.
+        /// </summary>
+        public static IConnection Local()
+        {
+            return Local (null, null);
+        }
 
-		/// <summary>
-		/// Makes a connection to a local SANE instance with some
-		/// credentials.
-		/// </summary>
-		/// <param name='userName'>
-		/// User name.
-		/// </param>
-		/// <param name='password'>
-		/// Password.
-		/// </param>
-		public static IConnection Local(string userName, string password)
-		{
-			return new LocalConnection(userName, password);
-		}
-
+        /// <summary>
+        /// Makes a connection to a local SANE instance with some
+        /// credentials.
+        /// </summary>
+        /// <param name='userName'>
+        /// User name.
+        /// </param>
+        /// <param name='password'>
+        /// Password.
+        /// </param>
+        public static IConnection Local(string userName, string password)
+        {
+            return new LocalConnection(userName, password);
+        }
+#endif
         /// <summary>
         /// Create a connection at the given address (host:port)
         /// </summary>

@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Drawing;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace NSane
 {
@@ -12,8 +13,8 @@ namespace NSane
     internal class TaskBasedScanResult : IScanResult
     {
         private readonly CancellationTokenSource _cancellationTokenSource;
-        private readonly Task<Bitmap> _task;
-        private readonly Action<Bitmap> _onCompleteCallback;
+        private readonly Task<BitmapSource> _task;
+        private readonly Action<BitmapSource> _onCompleteCallback;
 
         /// <summary>
         /// Construct with the details it needs to allow for completion
@@ -26,8 +27,8 @@ namespace NSane
         /// task has finished (can be null if you don't care)</param>
         internal TaskBasedScanResult(
             CancellationTokenSource cancellationTokenSource,
-            Task<Bitmap> task,
-            Action<Bitmap> onCompleteCallback)
+            Task<BitmapSource> task,
+            Action<BitmapSource> onCompleteCallback)
         {
             _onCompleteCallback = onCompleteCallback;
             _task = task;
@@ -41,7 +42,7 @@ namespace NSane
         /// so use the <see cref="IScanResult.IsFinished"/> property to decide whether to
         /// call this or not.
         /// </summary>
-        public Bitmap Image
+        public BitmapSource Image
         {
             get { return _task.Result; }
         }

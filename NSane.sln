@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSane", "NSane\NSane.csproj", "{CF40F816-E508-4299-AC3D-B0B09EF14565}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSane", "src\NSane.csproj", "{CF40F816-E508-4299-AC3D-B0B09EF14565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSaneTests", "NSaneTests\NSaneTests.csproj", "{2C242BCC-A3AD-4288-82BF-99EF5632F7D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSaneTests", "test\NSaneTests.csproj", "{2C242BCC-A3AD-4288-82BF-99EF5632F7D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

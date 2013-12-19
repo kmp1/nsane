@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace NSane.Network
 {
@@ -113,12 +114,15 @@ namespace NSane.Network
         /// <param name="onCompleteCallback">The callback to cal on
         /// completion</param>
         /// <returns>The scanned image result</returns>
-        public override IScanResult Scan(Action<Bitmap> onCompleteCallback)
+        public override IScanResult Scan(Action<BitmapSource> onCompleteCallback)
         {
             var cts = new CancellationTokenSource();
-            var task = Task<Bitmap>.Factory.StartNew(
+            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            var task = Task<BitmapSource>.Factory.StartNew(
                 () => _caller.Scan(_handle, _userName, _password, cts.Token),
-                cts.Token);
+                cts.Token,
+                TaskCreationOptions.None,
+                scheduler);
             return new TaskBasedScanResult(cts, task, onCompleteCallback);
         }
 

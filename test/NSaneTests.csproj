@@ -6,12 +6,15 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2C242BCC-A3AD-4288-82BF-99EF5632F7D0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NSane.Tests</RootNamespace>
     <AssemblyName>NSane.Tests</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>NSane.Tests.Program</StartupObject>
+    <StartupObject>
+    </StartupObject>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,11 +42,10 @@
     <AssemblyOriginatorKeyFile>..\nsane.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -52,11 +55,13 @@
     <Reference Include="nunit.framework">
       <HintPath>..\lib\nunit\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedProperties.cs">
       <Link>Properties\SharedProperties.cs</Link>
     </Compile>
+    <Compile Include="BitmapImageExtensions.cs" />
     <Compile Include="ConnectionTest.cs" />
     <Compile Include="DeviceTest.cs" />
     <Compile Include="OptionsTest.cs" />
@@ -64,7 +69,6 @@
     <Compile Include="ScanTest.cs" />
     <Compile Include="ScanTestCaseFactory.cs" />
     <Compile Include="TestConstants.cs" />
-    <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
@@ -75,6 +79,7 @@
     <None Include="..\nsane.snk">
       <Link>nsane.snk</Link>
     </None>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="images\16_color_color_pattern_0.tiff" />
@@ -106,6 +111,12 @@
     <EmbeddedResource Include="images\8_gray_solid_black.tiff" />
     <EmbeddedResource Include="images\8_gray_solid_white.tiff" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\NSane.csproj">
+      <Project>{CF40F816-E508-4299-AC3D-B0B09EF14565}</Project>
+      <Name>NSane</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -114,10 +125,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ItemGroup>
-    <ProjectReference Include="..\src\NSane.Mono.csproj">
-      <Project>{CF40F816-E508-4299-AC3D-B0B09EF14565}</Project>
-      <Name>NSane.Mono</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>
