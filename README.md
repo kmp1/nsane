@@ -104,5 +104,5 @@ Oh, One Other Thing
 If you are using this from a WPF application you should probably be fine (and probably winforms) but if you are using it from a console application (or, as in my case, a unit testing framework) and if you are using Windows Server 2003 you will need to weave some magic with a synchronization context.  Put simply, if you are getting an invalid cast exception from the bowels of the scan method, you may want to see the following for further information (also, have a look in the ScanTest unit test for the TestSynchronizationContext):
 
 - [Await, SynchronizationContext, and Console Apps](http://blogs.msdn.com/b/pfxteam/archive/2012/01/20/10259049.aspx)
-- [How to unit test code involving SynchronizationContext?](http://stackoverflow.com/questions/8353950/how-to-unit-test-code-involving-synchronizationcontext)
+- [How to unit test code involving SynchronizationContext?](http://stackoverflow.com/q/8353950/1039947)
 - [Why SynchronizationContext does not work properly?](http://stackoverflow.com/a/14144101/1039947)
