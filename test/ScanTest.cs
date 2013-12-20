@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Windows.Media.Imaging;
 
 using NUnit.Framework;
@@ -12,12 +11,38 @@ namespace NSane.Tests
     [TestFixture, RequiresSTA]
     public class ScanTest
     {
-        [SetUp]
-        public void TestSetUp()
+        
+        [Test, RequiresSTA]
+        public void Scan_Asynchronously_Succeeds()
         {
-            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-        }
+            bool callbackCalled = false;
+            using (var c = Connection.At(TestConstants.SaneDaemon))
+            {
+                using (var dev = c.OpenDevice(TestConstants.UnAuthenticatedDevice))
+                {
 
+                    bool atLeastOnce = false;
+                    var result = dev.Scan(s =>
+                        {
+                            Assert.That(atLeastOnce, Is.True, 
+                                "Callback called too soon");
+                            callbackCalled = true;
+                            Assert.That(s, Is.Not.Null, "No image");
+                        },
+                        e => Assert.Fail("An error happened during scan: "
+                                         + e.Flatten().GetBaseException().Message));
+
+                    while (!result.IsFinished)
+                    {
+                        atLeastOnce = true;
+                    }
+                    
+                    Assert.That(callbackCalled, Is.True, "Callback was not called");
+                  
+                }
+            }
+        }
+        
         [Test, TestCaseSource(typeof (ScanTestCaseFactory), "ScanTestCases"), RequiresSTA]
         public void Scan_NormalPicture_Succeeds(int depth,
                                                 string mode,
@@ -47,6 +72,8 @@ namespace NSane.Tests
                         inv.Value = inverted;
                     }
                     var res = device.Scan();
+
+                    Assert.That(res.IsError, Is.False, "Error calling scan");
 
                     var ours = res.Image.ToBitmapImage();
 

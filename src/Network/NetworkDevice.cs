@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,6 +46,8 @@ namespace NSane.Network
             _caller = caller;
             _userName = userName;
             _password = password;
+            SynchronizationContext.SetSynchronizationContext(
+                new SynchronizationContext());
         }
 
         /// <summary>
@@ -100,30 +101,42 @@ namespace NSane.Network
         }
 
         /// <summary>
-        /// Performs a sacn
+        /// Performs a scan
         /// </summary>
         /// <returns>The scanned image result</returns>
         public override IScanResult Scan()
         {
-            return Scan(null);
+            return Scan(null, null);
         }
 
         /// <summary>
         /// Performs a scan and calls a callback when complete
         /// </summary>
-        /// <param name="onCompleteCallback">The callback to cal on
+        /// <param name="onCompleteCallback">The callback to call on
         /// completion</param>
+        /// <param name="onFailureCallback">The callback to call on
+        /// error - have a look at the exception that was sent to get
+        /// further information - it is an <see cref="AggregateException"/>.
+        /// </param>
         /// <returns>The scanned image result</returns>
-        public override IScanResult Scan(Action<BitmapSource> onCompleteCallback)
+        public override IScanResult Scan(
+            Action<BitmapSource> onCompleteCallback,
+            Action<AggregateException> onFailureCallback)
         {
             var cts = new CancellationTokenSource();
             var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            
             var task = Task<BitmapSource>.Factory.StartNew(
                 () => _caller.Scan(_handle, _userName, _password, cts.Token),
                 cts.Token,
                 TaskCreationOptions.None,
                 scheduler);
-            return new TaskBasedScanResult(cts, task, onCompleteCallback);
+
+            return new TaskBasedScanResult(cts, 
+                                           task, 
+                                           onCompleteCallback,
+                                           onFailureCallback,
+                                           scheduler);
         }
 
         /// <summary>
@@ -148,13 +161,8 @@ namespace NSane.Network
         /// </param>
         protected override void Dispose(bool disposing)
         {
-            if (_caller != null)
-            {
-                if (_open)
-                {
-                    Close();
-                }
-            }
+            if (_caller != null && _open)
+                Close();
 
             base.Dispose(disposing);
         }
@@ -164,10 +172,8 @@ namespace NSane.Network
         /// </summary>
         private void Close()
         {
-            if (_started)
-            {
+            if (_started)           
                 Cancel();
-            }
 
             _caller.CloseDevice(_handle);
             _handle = 0;

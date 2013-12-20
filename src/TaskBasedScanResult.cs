@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -15,6 +14,7 @@ namespace NSane
         private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly Task<BitmapSource> _task;
         private readonly Action<BitmapSource> _onCompleteCallback;
+        private readonly Action<AggregateException> _onFailureCallback;
 
         /// <summary>
         /// Construct with the details it needs to allow for completion
@@ -25,15 +25,21 @@ namespace NSane
         /// <param name="task">The task</param>
         /// <param name="onCompleteCallback">A callback to call when the
         /// task has finished (can be null if you don't care)</param>
+        /// <param name="onFailureCallback">A callback to call when some
+        /// sort of error occurs</param>
+        /// <param name="scheduler">The scheduler</param>
         internal TaskBasedScanResult(
             CancellationTokenSource cancellationTokenSource,
             Task<BitmapSource> task,
-            Action<BitmapSource> onCompleteCallback)
+            Action<BitmapSource> onCompleteCallback,
+            Action<AggregateException> onFailureCallback,
+            TaskScheduler scheduler)
         {
             _onCompleteCallback = onCompleteCallback;
+            _onFailureCallback = onFailureCallback;
             _task = task;
             _cancellationTokenSource = cancellationTokenSource;
-            _task.ContinueWith(t => FinishedCallback());
+            _task.ContinueWith(t => FinishedCallback(), scheduler);
         }
 
         /// <summary>
@@ -56,6 +62,23 @@ namespace NSane
         }
 
         /// <summary>
+        /// Returns <c>true</c> if there was an error in scanning
+        /// </summary>
+        public bool IsError
+        {
+            get { return _task.IsFaulted; }
+        }
+
+        /// <summary>
+        /// Returns the <see cref="AggregateException"/> for anything that went
+        /// wrong making the call 
+        /// </summary>
+        public AggregateException Exception
+        {
+            get { return _task.Exception; }
+        }
+
+        /// <summary>
         /// Cancel the scanning operation
         /// </summary>
         public void StopScanning()
@@ -68,10 +91,16 @@ namespace NSane
         /// </summary>
         private void FinishedCallback()
         {
-            if (_onCompleteCallback != null)
+            if (IsError)
             {
-                _onCompleteCallback(Image);
+                if (_onFailureCallback != null)
+                    _onFailureCallback(Exception);
             }
+            else
+            {
+                if (_onCompleteCallback != null)
+                    _onCompleteCallback(Image);
+            }        
         }
     }
 }

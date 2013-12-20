@@ -13,9 +13,9 @@ namespace NSane.Network
 {
     /// <summary>
     /// Here we have centralized all the network RPC calls - basically it owns
-    /// a <see cref="NetworkMethods"/> object, which is in charge of making the calls,
-    /// but encapsulates the logic of making the calls (when to authenticate,
-    /// etc, etc)
+    /// a <see cref="NetworkMethods"/> object, which is in charge of making the
+    /// calls, but encapsulates the logic of making the them (when to 
+    /// authenticate, etc, etc)
     /// </summary>
     internal class NetworkProcedureCaller : DisposableObject
     {
@@ -66,8 +66,9 @@ namespace NSane.Network
         /// <param name="userName">The username</param>
         /// <param name="password">The password</param>
         /// <returns>The device list</returns>
-        internal IEnumerable<IOpenableDevice> RequestDeviceList(string userName,
-                                                                string password)
+        internal IEnumerable<IOpenableDevice> RequestDeviceList(
+            string userName,
+            string password)
         {
             _wire.SendCommand(NetworkCommand.GetDevices);
 
@@ -116,20 +117,22 @@ namespace NSane.Network
         /// <param name="reloadFunction">The function to call if
         /// the device requires reloading options</param>
         /// <returns>The device options</returns>
-        internal IEnumerable<IDeviceOption> RequestOptionList(int handle,
-                                                              string userName,
-                                                              string password,
-                                                              Action reloadFunction)
+        internal IEnumerable<IDeviceOption> RequestOptionList(
+            int handle,
+            string userName,
+            string password,
+            Action reloadFunction)
         {
             _wire.SendCommand(NetworkCommand.GetOptionDescriptors);
             _wire.SendWord(handle);
-            var ret = _wire.ReadPointerArray((w, n) =>
-                                             CreateDeviceOption(w,
-                                                                n,
-                                                                handle,
-                                                                userName,
-                                                                password,
-                                                                reloadFunction));
+            var ret = _wire
+                .ReadPointerArray((w, n) =>
+                                  CreateDeviceOption(w,
+                                                     n,
+                                                     handle,
+                                                     userName,
+                                                     password,
+                                                     reloadFunction));
             return ret;
         }
 
@@ -172,8 +175,8 @@ namespace NSane.Network
         }
 
         /// <summary>
-        /// Calls the Start remote procedure (maybe many times) and gets hold of
-        /// the scanned image
+        /// Calls the Start remote procedure (maybe many times) and gets hold
+        /// of the scanned image
         /// </summary>
         /// <param name="handle">The handle to the device</param>
         /// <param name="userName">The user name</param>
@@ -210,7 +213,6 @@ namespace NSane.Network
                                          out color))
                 {
                     ret = ImageCreator.ToBitmap(data,
-                                                bytesPerLine,
                                                 pixelsPerLine,
                                                 lines,
                                                 depth,
@@ -366,9 +368,7 @@ namespace NSane.Network
                                           int port)
         {
             if (format == FrameFormat.Rgb || format == FrameFormat.Gray)
-            {
                 return ReadImageData(port);
-            }
 
             if (stream == null)
                 throw new ArgumentNullException("stream");
@@ -635,7 +635,8 @@ namespace NSane.Network
         /// </summary>
         /// <param name="wire">The wire to read on</param>
         /// <returns>The constraint</returns>
-        private static IOptionConstraint CreateRangeConstraint(NetworkMethods wire)
+        private static IOptionConstraint CreateRangeConstraint(
+            NetworkMethods wire)
         {
             wire.ReadWord();
             int min = wire.ReadWord();
@@ -649,7 +650,8 @@ namespace NSane.Network
         /// </summary>
         /// <param name="wire">The wire to read on</param>
         /// <returns>The constraint</returns>
-        private static IOptionConstraint CreateIntegerListConstraint(NetworkMethods wire)
+        private static IOptionConstraint CreateIntegerListConstraint(
+            NetworkMethods wire)
         {
             wire.ReadWord();
             var values = wire.ReadArray((w, i) => w.ReadWord());
@@ -661,7 +663,8 @@ namespace NSane.Network
         /// </summary>
         /// <param name="wire">The wire to read on</param>
         /// <returns>The constraint</returns>
-        private static IOptionConstraint CreateStringListConstraint(NetworkMethods wire)
+        private static IOptionConstraint CreateStringListConstraint(
+            NetworkMethods wire)
         {
             var values = wire.ReadArray((w, i) =>
                                             {
@@ -781,7 +784,6 @@ namespace NSane.Network
                 }
             }
             return sb.ToString();
-        }
-          
+        }         
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Media.Imaging;
 
 namespace NSane
@@ -25,9 +24,14 @@ namespace NSane
         /// <summary>
         /// Performs a scan and calls a callback when complete
         /// </summary>
-        /// <param name="onCompleteCallback">The callback to cal on
+        /// <param name="onCompleteCallback">The callback to call on
         /// completion</param>
+        /// <param name="onFailureCallback">The callback to call on
+        /// error - have a look at the exception that was sent to get
+        /// further information - it is an <see cref="AggregateException"/>.
+        /// </param>
         /// <returns>The scanned image result</returns>
-        IScanResult Scan(Action<BitmapSource> onCompleteCallback);
+        IScanResult Scan(Action<BitmapSource> onCompleteCallback,
+                         Action<AggregateException> onFailureCallback);
     }
 }

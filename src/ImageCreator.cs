@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -21,7 +22,6 @@ namespace NSane
         /// Convert the given stream into a bitmap
         /// </summary>
         /// <param name="stream">The stream to convert</param>
-        /// <param name="bytesPerLine">The bytes per line</param>
         /// <param name="pixelsPerLine">The pixels per line</param>
         /// <param name="lines">The number of lines</param>
         /// <param name="depth">THe depth</param>
@@ -35,7 +35,6 @@ namespace NSane
             "CA2000:Dispose objects before losing scope", Justification =
                 "If I did that, this whole thing would break!")]
         internal static BitmapSource ToBitmap(MemoryStream stream,
-                                             int bytesPerLine,
                                              int pixelsPerLine,
                                              int lines,
                                              int depth,
@@ -57,6 +56,10 @@ namespace NSane
             }
             else
             {
+                if (!littleEndian)
+                    throw new NotImplementedException(
+                        "Here we need to implement code to swap the bytes around");
+
                 ret = color 
                     ? ToRgbBitmap16(pixelsPerLine, lines, data) 
                     : ToGrayBitmap16(pixelsPerLine, lines, data);

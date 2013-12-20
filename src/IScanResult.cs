@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System;
 using System.Windows.Media.Imaging;
 
 namespace NSane
@@ -24,6 +24,17 @@ namespace NSane
         /// Returns <c>true</c> if the scanning has completed
         /// </summary>
         bool IsFinished { get; }
+
+        /// <summary>
+        /// Returns <c>true</c> if there was an error in scanning
+        /// </summary>
+        bool IsError { get; }
+
+        /// <summary>
+        /// Returns the <see cref="AggregateException"/> for anything that went
+        /// wrong making the call 
+        /// </summary>
+        AggregateException Exception { get; }
 
         /// <summary>
         /// Cancel the scanning operation
