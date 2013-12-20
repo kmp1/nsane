@@ -89,14 +89,14 @@ for [mono](http://www.mono-project.com) that would work on Mac and Linux.  The p
 License
 -------
 
-I am giving this to the community under the Apache license - enjoy and please don't blame me if somethnig bad happens when you use it.  See the LICENSE file in the repository.
+I am giving this to the community under the Apache license - enjoy and please don't blame me if somethnig bad happens when you use it.  See the [LICENSE](https://github.com/kmp1/nsane/blob/master/LICENSE) file in the repository.
 
 Test Troubleshooting
 --------------------
 
 - If you get a TCP error about the connection being actively refused check the `TestConstants.SaneDaemonHost` and `TestConstants.SaneDaemonPort` values are correct and that the `saned` process is running on the remote machine.
 
-- If `Device_GetAll_Succeeds` fails with the message `No devices discovered` edit vi `/etc/sane.d/dll.conf` on the sane server and make sure the test backend is not commented out.
+- If `Device_GetAll_Succeeds` fails with the message `No devices discovered` edit `/etc/sane.d/dll.conf` on the sane server and make sure the test backend is not commented out.
 
 Oh, One Other Thing
 -------------------
