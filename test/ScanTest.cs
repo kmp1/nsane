@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -9,34 +8,19 @@ using NUnit.Framework;
 
 namespace NSane.Tests
 {
-    public class TestSynchronizationContext : SynchronizationContext
+    public class SingleThreadSynchronizationContext : SynchronizationContext
     {
-        [ThreadStatic]
-        private static object _currentPostToken;
+        private readonly AutoResetEvent _postHandle;
 
-        public static object CurrentPostToken
+        public SingleThreadSynchronizationContext()
         {
-            get { return _currentPostToken; }
-        }
-
-        public AutoResetEvent PostHandle { get; private set; }
-
-        public TestSynchronizationContext()
-        {
-            PostHandle = new AutoResetEvent(false);
+            _postHandle = new AutoResetEvent(false);
         }
 
         public override void Post(SendOrPostCallback d, object state)
         {
-            try
-            {
-                d(state);
-            }
-            finally
-            {
-                _currentPostToken = null;
-            }
-            PostHandle.Set();
+            d(state);
+            _postHandle.Set();
         }
     }
 
@@ -47,7 +31,7 @@ namespace NSane.Tests
         public void TestSetUp()
         {
             SynchronizationContext.SetSynchronizationContext(
-                new TestSynchronizationContext());
+                new SingleThreadSynchronizationContext());
         }
         
         [Test, RequiresSTA]
