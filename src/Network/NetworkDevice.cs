@@ -46,8 +46,6 @@ namespace NSane.Network
             _caller = caller;
             _userName = userName;
             _password = password;
-            SynchronizationContext.SetSynchronizationContext(
-                new SynchronizationContext());
         }
 
         /// <summary>

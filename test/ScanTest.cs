@@ -1,16 +1,54 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Media.Imaging;
 
 using NUnit.Framework;
 
 namespace NSane.Tests
 {
+    public class TestSynchronizationContext : SynchronizationContext
+    {
+        [ThreadStatic]
+        private static object _currentPostToken;
+
+        public static object CurrentPostToken
+        {
+            get { return _currentPostToken; }
+        }
+
+        public AutoResetEvent PostHandle { get; private set; }
+
+        public TestSynchronizationContext()
+        {
+            PostHandle = new AutoResetEvent(false);
+        }
+
+        public override void Post(SendOrPostCallback d, object state)
+        {
+            try
+            {
+                d(state);
+            }
+            finally
+            {
+                _currentPostToken = null;
+            }
+            PostHandle.Set();
+        }
+    }
 
     [TestFixture, RequiresSTA]
     public class ScanTest
     {
+        [SetUp]
+        public void TestSetUp()
+        {
+            SynchronizationContext.SetSynchronizationContext(
+                new TestSynchronizationContext());
+        }
         
         [Test, RequiresSTA]
         public void Scan_Asynchronously_Succeeds()
@@ -21,11 +59,8 @@ namespace NSane.Tests
                 using (var dev = c.OpenDevice(TestConstants.UnAuthenticatedDevice))
                 {
 
-                    bool atLeastOnce = false;
                     var result = dev.Scan(s =>
                         {
-                            Assert.That(atLeastOnce, Is.True, 
-                                "Callback called too soon");
                             callbackCalled = true;
                             Assert.That(s, Is.Not.Null, "No image");
                         },
@@ -34,7 +69,6 @@ namespace NSane.Tests
 
                     while (!result.IsFinished)
                     {
-                        atLeastOnce = true;
                     }
                     
                     Assert.That(callbackCalled, Is.True, "Callback was not called");
