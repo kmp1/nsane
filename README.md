@@ -28,8 +28,8 @@ This is probably the simplest way to use the API if you just want to do a scan:
         }
     }
 
-But Scanning is a Delightfully Asynchronous Thing!?
----------------------------------------------------
+But Scanning is Delightfully Asynchronous!?
+-------------------------------------------
 
 Yup, it is and that is why the Scan method returns an `IScanResult` object.  Internally it is using the [Task](http://msdn.microsoft.com/en-us/library/system.threading.tasks.task%28v=vs.110%29.aspx) mechanism and hence there are `IsFinished` and `IsError` properties on the return object.  By accessing the `Image` property in the last example I am effectively blocking until the task completes.
 
