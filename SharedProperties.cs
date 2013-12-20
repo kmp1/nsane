@@ -5,6 +5,6 @@ using System.Reflection;
 [assembly: AssemblyFileVersion("0.0.0.1")]
 [assembly: AssemblyCompany("NSane")]
 [assembly: AssemblyProduct("NSane")]
-[assembly: AssemblyCopyright("Copyright © NSane 2013")]
+[assembly: AssemblyCopyright("Copyright © NSane 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: CLSCompliant(true)]
