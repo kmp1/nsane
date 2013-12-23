@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -21,7 +21,7 @@ namespace NSane
         /// <summary>
         /// Convert the given stream into a bitmap
         /// </summary>
-        /// <param name="stream">The stream to convert</param>
+        /// <param name="data">The data to convert</param>
         /// <param name="pixelsPerLine">The pixels per line</param>
         /// <param name="lines">The number of lines</param>
         /// <param name="depth">THe depth</param>
@@ -30,19 +30,13 @@ namespace NSane
         /// <param name="color"><c>true</c> if it is a color bitmap</param>
         /// <returns>A <see cref="BitmapSource"/> containing the resulting
         /// image</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Reliability",
-            "CA2000:Dispose objects before losing scope", Justification =
-                "If I did that, this whole thing would break!")]
-        internal static BitmapSource ToBitmap(MemoryStream stream,
-                                             int pixelsPerLine,
-                                             int lines,
-                                             int depth,
-                                             bool littleEndian,
-                                             bool color)
+        internal static BitmapSource ToBitmap(byte[] data,
+                                              int pixelsPerLine,
+                                              int lines,
+                                              int depth,
+                                              bool littleEndian,
+                                              bool color)
         {
-            var data = stream.ToArray();
-
             BitmapFrame ret;
             if (depth == 1)
             {
@@ -57,9 +51,8 @@ namespace NSane
             else
             {
                 if (!littleEndian)
-                    throw new NotImplementedException(
-                        "Here we need to implement code to swap the bytes around");
-
+                    data = SwapPairs(data).ToArray();
+                    
                 ret = color 
                     ? ToRgbBitmap16(pixelsPerLine, lines, data) 
                     : ToGrayBitmap16(pixelsPerLine, lines, data);
@@ -68,6 +61,25 @@ namespace NSane
             ret.Freeze();
 
             return ret;
+        }
+
+        /// <summary>
+        /// Swaps pairs of bytes around
+        /// </summary>
+        /// <param name="data">The data to swap</param>
+        /// <returns></returns>
+        private static IEnumerable<byte> SwapPairs(byte[] data)
+        {
+            for (int i = 0; i < data.Length; i += 2)
+            {
+                var b1 = data[i];
+                if (i + 1 < data.Length)
+                {
+                    var b2 = data[i + 1];
+                    yield return b2;
+                }
+                yield return b1;
+            }
         }
 
         /// <summary>
@@ -81,11 +93,7 @@ namespace NSane
         /// <param name="lines">The number of lines</param>
         /// <param name="pixelsPerLine">The count of pixels per line</param>
         /// <param name="data">The data</param>
-        /// <returns>A newly created <see cref="BitmapSource"/></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Reliability", 
-            "CA2000:Dispose objects before losing scope", Justification = 
-            "If I disposed of it, it just wouldn't work now would it!?")]
+        /// <returns>A newly created <see cref="BitmapSource"/></returns>       
         private static BitmapFrame ToBitmap1(int lines,
                                              int pixelsPerLine,
                                              byte[] data)
@@ -109,10 +117,6 @@ namespace NSane
         /// <param name="pixelsPerLine">The count of pixels per line</param>
         /// <param name="data">The data</param>
         /// <returns>A newly created <see cref="BitmapSource"/></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Reliability",
-            "CA2000:Dispose objects before losing scope", Justification =
-            "If I disposed of it, it just wouldn't work now would it!?")]
         private static BitmapFrame ToGrayBitmap8(int lines,
                                                  int pixelsPerLine,
                                                  byte[] data)
@@ -136,10 +140,6 @@ namespace NSane
         /// <param name="pixelsPerLine">The count of pixels per line</param>
         /// <param name="data">The data</param>
         /// <returns>A newly created <see cref="BitmapSource"/></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Microsoft.Reliability",
-            "CA2000:Dispose objects before losing scope", Justification =
-            "If I disposed of it, it just wouldn't work now would it!?")]
         private static BitmapFrame ToRgbBitmap8(int lines,
                                                 int pixelsPerLine,
                                                 byte[] data)

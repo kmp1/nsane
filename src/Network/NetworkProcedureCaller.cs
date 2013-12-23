@@ -190,37 +190,38 @@ namespace NSane.Network
         {
             cancelToken.Register(() => Cancel(handle));
 
-            BitmapSource ret;
+            int pixelsPerLine;
+            int lines;
+            int depth;
+            bool littleEndian;
+            bool color;
+            byte[] data;
             using (var ms = new MemoryStream())
             {
-                int bytesPerLine;
-                int pixelsPerLine;
-                int lines;
-                int depth;
-                bool littleEndian;
-                bool color;
-                using (var data = DoScan(handle,
-                                         userName,
-                                         password,
-                                         true,
-                                         ms,
-                                         cancelToken,
-                                         out bytesPerLine,
-                                         out pixelsPerLine,
-                                         out lines,
-                                         out depth,
-                                         out littleEndian,
-                                         out color))
+                int bytesPerLine;             
+                using (var stream = DoScan(handle,
+                                           userName,
+                                           password,
+                                           true,
+                                           ms,
+                                           cancelToken,
+                                           out bytesPerLine,
+                                           out pixelsPerLine,
+                                           out lines,
+                                           out depth,
+                                           out littleEndian,
+                                           out color))
                 {
-                    ret = ImageCreator.ToBitmap(data,
-                                                pixelsPerLine,
-                                                lines,
-                                                depth,
-                                                littleEndian,
-                                                color);
-                }
+                    data = stream.ToArray();
+                }              
             }
 
+            var ret = ImageCreator.ToBitmap(data,
+                                            pixelsPerLine,
+                                            lines,
+                                            depth,
+                                            littleEndian,
+                                            color);
             return ret;
         }
 
