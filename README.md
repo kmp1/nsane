@@ -1,5 +1,4 @@
-NSane
-=====
+## NSane
 
 This little assembly wraps up the SANE API, details of which can be found at the [SANE Website](http://www.sane-project.org/), so that it can be used from .Net.  Yes, this is a slightly weird idea since SANE is all about scanning on Linux and .Net is, well, not very Linux (yup, mono, I will come to that) but if, for example, you have a box on your network that runs the saned daemon, you can use this API to make it scan.
 
@@ -7,8 +6,7 @@ The story was this: I had a Raspberry Pi and a scanner and two PCs and I wanted 
 
 And this is what this project is.  Nothing more, nothing less.
 
-Getting Started
----------------
+# Getting Started
 
 So, start by adding a reference to the assembly and stick this using statement in your code:
 
@@ -28,8 +26,7 @@ This is probably the simplest way to use the API if you just want to do a scan:
         }
     }
 
-But Scanning is Delightfully Asynchronous!?
--------------------------------------------
+# But Scanning is Delightfully Asynchronous!?
 
 Yup, it is and that is why the Scan method returns an `IScanResult` object.  Internally it is using the [Task](http://msdn.microsoft.com/en-us/library/system.threading.tasks.task%28v=vs.110%29.aspx) mechanism and hence there are `IsFinished` and `IsError` properties on the return object.  By accessing the `Image` property in the last example I am effectively blocking until the task completes.
 
@@ -58,8 +55,7 @@ Most likely you will want to continue on and have a callback called when scannin
         }
     }
 	
-Setting Scan Options
---------------------
+# Setting Scan Options
 
 There is one bit of the API that is not really discoverable and that is setting option values.  I am using a dynamic property in this case since the type of value you can set varies according to the option itself.  You should, therefore, make sure that you use the correct type when setting the property, for example here we will set the "depth" option of the test backend - notice that we are passing it an integer:
 
@@ -73,33 +69,28 @@ There is one bit of the API that is not really discoverable and that is setting 
     // Set it to something else
     depth.Value = 16;
     
-Tests
------
+# Tests
 
 There are a bunch of unit tests in the NSaneTests project, so have a look in there if you get stuck (also, if you find a bug, please get the tests to fail in your scenario when you report it - that would be a massive help).
 
 In order to run the tests you will need to have configured the SANE test backend and you will need to adjust the constants in the TestConstants.cs file.  See the troubleshooting part below for information about what may go wrong.
 
-Next Steps
-----------
+# Next Steps
 
 I see no reason why a "local" SANE scanner could not be implemented, at least
 for [mono](http://www.mono-project.com) that would work on Mac and Linux.  The project has mono csproj files that but I have not been able to get them to compile as I have no [PresentationCore](http://msdn.microsoft.com/en-us/library/system.windows.media.imagesource%28v=vs.110%29.aspx) assembly available to me (I'm running Debian 7).  I believe that newer mono versions have this library.
 
-License
--------
+# License
 
 I am giving this to the community under the Apache license - enjoy and please don't blame me if somethnig bad happens when you use it.  See the [LICENSE](https://github.com/kmp1/nsane/blob/master/LICENSE) file in the repository.
 
-Test Troubleshooting
---------------------
+# Test Troubleshooting
 
 - If you get a TCP error about the connection being actively refused check the `TestConstants.SaneDaemonHost` and `TestConstants.SaneDaemonPort` values are correct and that the `saned` process is running on the remote machine.
 
 - If `Device_GetAll_Succeeds` fails with the message `No devices discovered` edit `/etc/sane.d/dll.conf` on the sane server and make sure the test backend is not commented out.
 
-Oh, One Other Thing
--------------------
+# Oh, One Other Thing...
 
 If you are using this from a WPF application or winforms application you should probably be fine.  If you are not using Windows Server 2003, you should also probably be fine.  
 
