@@ -96,7 +96,7 @@ If you are using this from a WPF application or winforms application you should 
 
 Sadly, in Windows 2003 there's an issue with WriteableBitmap that means it throws invalid cast exception if the thread is not an STA thread.  [Here](http://msdn.microsoft.com/en-us/library/system.invalidcastexception%28v=vs.110%29.aspx) is some information about that.  
 
-So, if this is you, you need to make sure that the threads that are launched all launch with STA and the way to do that is with a SynchronizationContext.  Have a look at the following atticles and the SingleThreadSynchronizationContext in the ScanTest for further information:
+So, if this is you, you need to make sure that the threads that are launched all launch with STA and the way to do that is with a SynchronizationContext.  Have a look at the following articles and the SingleThreadSynchronizationContext in the ScanTest for further information:
 
 - [Await, SynchronizationContext, and Console Apps](http://blogs.msdn.com/b/pfxteam/archive/2012/01/20/10259049.aspx)
 - [How to unit test code involving SynchronizationContext?](http://stackoverflow.com/q/8353950/1039947)
