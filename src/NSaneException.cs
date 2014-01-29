@@ -150,10 +150,7 @@ namespace NSane
                             Status = SaneStatus.AccessDenied
                         };
                 default:
-                    return new NSaneException(Strings.EXCEPTION_UNKNOWN)
-                        {
-                            Status = SaneStatus.Unknown
-                        };
+                    return new NSaneException(Strings.EXCEPTION_UNKNOWN);
             }
         }
     }

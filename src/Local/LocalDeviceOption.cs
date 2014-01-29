@@ -1,6 +1,6 @@
 using System;
 
-namespace NSane
+namespace NSane.Local
 {
 	/// <summary>
 	/// This is an option for a locally connected device.
@@ -8,7 +8,6 @@ namespace NSane
 	internal class LocalDeviceOption : DeviceOption
 	{
 		private readonly int _handle;
-		private readonly LocalProcedureCaller _caller;
 		private readonly string _userName;
 		private readonly string _password;
 
@@ -26,7 +25,6 @@ namespace NSane
 		/// <param name="capabilities">A bit flag of the capabilities of
 		/// the option</param>
 		/// <param name="handle">The handle to the device</param>
-		/// <param name="caller">The caller</param>
 		/// <param name="userName">The username for authenticated calls</param>
 		/// <param name="password">The password for authenticated calls</param>
 		/// <param name="reloadFunction">A function to call if setting this
@@ -40,7 +38,6 @@ namespace NSane
 		                          SaneUnit unit,
 		                          SaneCapabilities capabilities,
 		                          int handle,
-		                          LocalProcedureCaller caller,
 		                          string userName,
 		                          string password,
 		                          Action reloadFunction)
@@ -57,7 +54,6 @@ namespace NSane
 			_handle = handle;
 			_userName = userName;
 			_password = password;
-			_caller = caller;
 		}
 
 		public override void SetToAutomatic()

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
-
 using NSane.Network;
+#if Mono
+using NSane.Local;
+#endif
 
 namespace NSane
 {

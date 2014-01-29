@@ -3,7 +3,7 @@
     /// <summary>
     /// The option action
     /// </summary>
-    internal enum SaneOptionAction
+    internal enum SaneOptionAction : uint
     {
         /// <summary>
         /// Gets the option value

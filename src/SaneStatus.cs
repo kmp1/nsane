@@ -4,12 +4,7 @@
     /// SANE error codes enumeration
     /// </summary>
     public enum SaneStatus
-    {
-        /// <summary>
-        /// Unknown
-        /// </summary>
-        Unknown = -1,
-
+    {        
         /// <summary>
         /// Not an error - success
         /// </summary>

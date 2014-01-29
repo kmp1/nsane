@@ -4,7 +4,7 @@
     /// This is the type of frame that has been returned from the Start
     /// command.
     /// </summary>
-    internal enum FrameFormat
+    internal enum FrameFormat : uint
     {
         /// <summary>
         /// Band covering human visual range.
