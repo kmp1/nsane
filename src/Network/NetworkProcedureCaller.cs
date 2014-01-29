@@ -377,7 +377,7 @@ namespace NSane.Network
             // TODO Here we need to use the format to know what frame we are (
             // red, green or blue) and the original data - in the stream
             // argument to interleave the values
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
@@ -493,9 +493,8 @@ namespace NSane.Network
 
             int sze = sender(_wire, size);
 
-            int status = _wire.ReadWord();
-            //_wire.ReadWord();
-            // TODO: Do something with info
+            int status = _wire.ReadWord();            
+            
             var info = (SaneOptionInformation) _wire.ReadWord();
             var valueType = (SaneType) _wire.ReadWord();
             int valueSize = _wire.ReadWord();

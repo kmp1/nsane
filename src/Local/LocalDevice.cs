@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 
 namespace NSane.Local
@@ -10,12 +12,10 @@ namespace NSane.Local
     /// </summary>
     internal class LocalDevice : Device
     {
-        private readonly string _userName;
-        private readonly string _password;
-
         private IntPtr _handle;
         private bool _open;
         private bool _started;
+        private IEnumerable<IDeviceOption> _options;
 
         /// <summary>
         /// Construct the device with the bits and bobs it needs
@@ -24,20 +24,12 @@ namespace NSane.Local
         /// <param name="vendor">The vendor</param>
         /// <param name="model">The model</param>
         /// <param name="type">The type</param>
-        /// <param name="userName">The username to use for authenticated calls
-        /// </param>
-        /// <param name="password">The password to use for authenticated calls
-        /// </param>
         internal LocalDevice(string name,
                              string vendor,
                              string model,
-                             string type,
-                             string userName,
-                             string password)
+                             string type)
             : base(name, vendor, model, type)
         {
-            _userName = userName;
-            _password = password;
             _open = false;
         }
 
@@ -46,20 +38,17 @@ namespace NSane.Local
         /// </summary>
         /// <param name="name"></param>
         /// <param name="handle"></param>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        internal LocalDevice(string name,
-                             IntPtr handle,
-                             string userName,
-                             string password)
+        internal LocalDevice(string name, IntPtr handle)
             : base(name, null, null, null)
         {
-            _userName = userName;
-            _password = password;
             _handle = handle;
             _open = true;
         }
 
+        /// <summary>
+        /// Opens the device
+        /// </summary>
+        /// <returns></returns>
         public override IOpenedDevice Open()
         {
             IntPtr handle;
@@ -72,22 +61,36 @@ namespace NSane.Local
             return this;
         }
 
+        /// <summary>
+        /// Implements the synchronous scanning method
+        /// </summary>
+        /// <returns></returns>
         public override IScanResult Scan()
         {
-            throw new NotImplementedException();
+            return Scan(null, null);
         }
 
+        /// <summary>
+        /// Implements an asynchronous scan
+        /// </summary>
+        /// <param name="onCompleteCallback">The on complete callback</param>
+        /// <param name="onFailureCallback">The on failure callback</param>
+        /// <returns></returns>
         public override IScanResult Scan(Action<BitmapSource> onCompleteCallback, 
             Action<AggregateException> onFailureCallback)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets all options
+        /// </summary>
         public override IEnumerable<IDeviceOption> AllOptions
         {
-            get 
+            get
             {
-                throw new NotImplementedException();
+                return _options ??
+                       (_options = RequestOptionList(ReloadOptions).ToList());
             }
         }
 
@@ -141,7 +144,64 @@ namespace NSane.Local
         {
             NativeMethods.SaneCancel(_handle);
             _started = false;
-        }        
+        }
+
+        private IEnumerable<IDeviceOption> RequestOptionList(Action reloadFunction)
+        {
+            var p = NativeMethods.SaneGetOptionDescriptor(_handle, 0);
+            int count = p == IntPtr.Zero
+                ? 0
+                : p.ToInt32();
+                
+            for (int i = 1; i < count; i++)
+            {
+                var opt = ToOptionDescriptor(NativeMethods.SaneGetOptionDescriptor(_handle, i));
+
+                var localOption = new LocalDeviceOption(opt.Name,
+                                                        opt.Title,
+                                                        opt.Description,
+                                                        opt.Size,
+                                                        i,
+                                                        opt.Type,
+                                                        opt.Unit,
+                                                        opt.Capabilities,
+                                                        _handle,
+                                                        reloadFunction);
+                yield return localOption;
+            }
+        }
+
+        private static SaneOptionDescriptor ToOptionDescriptor(IntPtr pointer)
+        {
+            return (SaneOptionDescriptor)Marshal.PtrToStructure(
+                pointer, typeof(SaneOptionDescriptor));
+        }
+
+        /// <summary>
+        /// This function is called when the device needs to have it's options
+        /// refreshed - we just call the get option list and then map the
+        /// properties across
+        /// </summary>
+        private void ReloadOptions()
+        {
+            var options = RequestOptionList(ReloadOptions);
+
+            foreach (var deviceOption in options)
+            {                
+                var opt = _options
+                    .Cast<DeviceOption>()
+                    .Single(o => (o).Number ==
+                                 ((DeviceOption)deviceOption).Number);
+
+                opt.Name = deviceOption.Name;
+                opt.Capabilities = deviceOption.Capabilities;
+                opt.Constraint = deviceOption.Constraint;
+                opt.Type = deviceOption.Type;
+                opt.Unit = deviceOption.Unit;
+                opt.Description = deviceOption.Description;
+                opt.Title = deviceOption.Title;
+            }
+        }
     }
 }
 

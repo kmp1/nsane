@@ -32,23 +32,8 @@ namespace NSane
         /// </summary>
         public static IConnection Local()
         {
-            return Local (null, null);
-        }
-
-        /// <summary>
-        /// Makes a connection to a local SANE instance with some
-        /// credentials.
-        /// </summary>
-        /// <param name='userName'>
-        /// User name.
-        /// </param>
-        /// <param name='password'>
-        /// Password.
-        /// </param>
-        public static IConnection Local(string userName, string password)
-        {
-            return new LocalConnection(userName, password);
-        }
+            return new LocalConnection();
+        }        
 #endif
         /// <summary>
         /// Create a connection at the given address (host:port)

@@ -46,6 +46,9 @@ namespace NSane.Local
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_strstatus")]
         public extern static IntPtr SaneStatus(SaneStatus status);
         
@@ -80,6 +83,9 @@ namespace NSane.Local
         /// <param name="v"></param>
         /// <param name="i"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_control_option")]
         public extern static SaneStatus SaneControlOption2(IntPtr handle, int n, SaneOptionAction a, ref IntPtr v, ref int i);
 
@@ -128,6 +134,9 @@ namespace NSane.Local
         /// <param name="v"></param>
         /// <param name="i"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_control_option")]
         public extern static SaneStatus SaneControlOptionFixed(IntPtr handle, int n, SaneOptionAction a, ref int v, ref int i);
 
@@ -152,6 +161,9 @@ namespace NSane.Local
         /// <param name="v"></param>
         /// <param name="i"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_control_option")]
         public extern static SaneStatus SaneControlOption(IntPtr handle, int n, SaneOptionAction a, ref IntPtr v, ref IntPtr i);
 
@@ -164,6 +176,9 @@ namespace NSane.Local
         /// <param name="v"></param>
         /// <param name="i"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", 
+            "CA1811:AvoidUncalledPrivateCode", Justification = 
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_control_option")]
         public extern static SaneStatus SaneControlOption(IntPtr handle, int n, SaneOptionAction a, ref float v, ref int i);
 
@@ -176,6 +191,9 @@ namespace NSane.Local
         /// <param name="v"></param>
         /// <param name="i"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_control_option", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         public extern static SaneStatus SaneControlOption(IntPtr handle, int n, SaneOptionAction a, StringBuilder v, ref int i);
 
@@ -196,6 +214,9 @@ namespace NSane.Local
         /// <param name="maxlen"></param>
         /// <param name="len"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_read")]
         public extern static SaneStatus SaneRead(IntPtr handle, out IntPtr buf, int maxlen, ref int len);
 
@@ -207,6 +228,9 @@ namespace NSane.Local
         /// <param name="maxlen"></param>
         /// <param name="len"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_read")]
         public extern static SaneStatus SaneRead(IntPtr handle, [Out, MarshalAs(UnmanagedType.LPArray, SizeConst = 32768)] byte[] buf, int maxlen, ref int len);
 
@@ -216,6 +240,9 @@ namespace NSane.Local
         /// <param name="handle"></param>
         /// <param name="p"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_get_parameters")]
         public extern static SaneStatus SaneGetParameters(IntPtr handle, ref IntPtr p);
 
@@ -225,6 +252,9 @@ namespace NSane.Local
         /// <param name="handle"></param>
         /// <param name="p"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_get_parameters")]
         public extern static SaneStatus SaneGetParameters(IntPtr handle, [In, Out, MarshalAs(UnmanagedType.LPStruct)] SaneParameters p);
 
@@ -234,6 +264,9 @@ namespace NSane.Local
         /// <param name="handle"></param>
         /// <param name="p"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_get_parameters")]
         public extern static SaneStatus SaneGetParameters(IntPtr handle, IntPtr p);
 
@@ -242,6 +275,9 @@ namespace NSane.Local
         /// </summary>
         /// <param name="handle"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_start")]
         public extern static SaneStatus SaneStart(IntPtr handle);
        
@@ -249,6 +285,9 @@ namespace NSane.Local
         /// Cancel
         /// </summary>
         /// <param name="handle"></param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_cancel")]
         public extern static void SaneCancel(IntPtr handle);
 
@@ -258,6 +297,9 @@ namespace NSane.Local
         /// <param name="handle"></param>
         /// <param name="async"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_set_io_mode")]
         public extern static SaneStatus SaneSetIoMode(IntPtr handle, [MarshalAs(UnmanagedType.Bool)] bool async);
 
@@ -267,6 +309,9 @@ namespace NSane.Local
         /// <param name="handle"></param>
         /// <param name="fd"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+            "CA1811:AvoidUncalledPrivateCode", Justification =
+            "This is here so we have the complete API wrapped")]
         [DllImport("libsane", EntryPoint = "sane_get_select_fd")]
         public extern static SaneStatus SaneGetSelectFd(IntPtr handle, out IntPtr fd);
     }

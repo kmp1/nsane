@@ -10,8 +10,6 @@ namespace NSane.Local
     /// </summary>
     internal class LocalConnection : DisposableObject, IConnection
     {
-        private readonly string _userName;
-        private readonly string _password;
         private IEnumerable<IOpenableDevice> _devices;
         private bool _open;
 
@@ -20,17 +18,8 @@ namespace NSane.Local
         /// <see cref="LocalConnection"/> class with
         /// credentials.
         /// </summary>
-        /// <param name='userName'>
-        /// User name.
-        /// </param>
-        /// <param name='password'>
-        /// Password.
-        /// </param>
-        public LocalConnection(string userName, string password)
+        public LocalConnection()
         {
-            _userName = userName;
-            _password = password;
-
             int ver;
             var status = NativeMethods.SaneInitialize(out ver, IntPtr.Zero);
             if (status != (int)SaneStatus.Success)
@@ -53,7 +42,7 @@ namespace NSane.Local
             if (status != (int)SaneStatus.Success)
                 throw NSaneException.CreateFromStatus((int)status);
 
-            var device = new LocalDevice(name, handle, _userName, _password);
+            var device = new LocalDevice(name, handle);
             return device;
         }
 
@@ -140,9 +129,7 @@ namespace NSane.Local
                 yield return new LocalDevice(device.Name,
                                              device.Vendor,
                                              device.Model,
-                                             device.Type,                                             
-                                             _userName,
-                                             _password);
+                                             device.Type);
             }            
         }
 
